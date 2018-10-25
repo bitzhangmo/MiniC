@@ -44,26 +44,37 @@
      RELOP = 260,
      TYPE = 261,
      FLOAT = 262,
-     LP = 263,
-     RP = 264,
-     LC = 265,
-     RC = 266,
-     SEMI = 267,
-     COMMA = 268,
-     PLUS = 269,
-     MINUS = 270,
-     STAR = 271,
-     DIV = 272,
-     ASSIGNOP = 273,
-     AND = 274,
-     OR = 275,
-     NOT = 276,
-     IF = 277,
-     ELSE = 278,
-     WHILE = 279,
-     RETURN = 280,
-     UMINUS = 281,
-     LOWER_THEN_ELSE = 282
+     CHAR = 263,
+     LP = 264,
+     RP = 265,
+     LC = 266,
+     RC = 267,
+     SEMI = 268,
+     COMMA = 269,
+     LB = 270,
+     RB = 271,
+     PLUS = 272,
+     MINUS = 273,
+     STAR = 274,
+     DIV = 275,
+     ASSIGNOP = 276,
+     AND = 277,
+     OR = 278,
+     NOT = 279,
+     IF = 280,
+     ELSE = 281,
+     WHILE = 282,
+     RETURN = 283,
+     SELFPLUS = 284,
+     SELFMINUS = 285,
+     PLUSASS = 286,
+     MINUSASS = 287,
+     STARASS = 288,
+     DIVASS = 289,
+     NMINUS = 290,
+     FOR = 291,
+     UMINUS = 292,
+     LOWER_THEN_ELSE = 293
    };
 #endif
 /* Tokens.  */
@@ -72,41 +83,53 @@
 #define RELOP 260
 #define TYPE 261
 #define FLOAT 262
-#define LP 263
-#define RP 264
-#define LC 265
-#define RC 266
-#define SEMI 267
-#define COMMA 268
-#define PLUS 269
-#define MINUS 270
-#define STAR 271
-#define DIV 272
-#define ASSIGNOP 273
-#define AND 274
-#define OR 275
-#define NOT 276
-#define IF 277
-#define ELSE 278
-#define WHILE 279
-#define RETURN 280
-#define UMINUS 281
-#define LOWER_THEN_ELSE 282
+#define CHAR 263
+#define LP 264
+#define RP 265
+#define LC 266
+#define RC 267
+#define SEMI 268
+#define COMMA 269
+#define LB 270
+#define RB 271
+#define PLUS 272
+#define MINUS 273
+#define STAR 274
+#define DIV 275
+#define ASSIGNOP 276
+#define AND 277
+#define OR 278
+#define NOT 279
+#define IF 280
+#define ELSE 281
+#define WHILE 282
+#define RETURN 283
+#define SELFPLUS 284
+#define SELFMINUS 285
+#define PLUSASS 286
+#define MINUSASS 287
+#define STARASS 288
+#define DIVASS 289
+#define NMINUS 290
+#define FOR 291
+#define UMINUS 292
+#define LOWER_THEN_ELSE 293
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 15 "Parser.y"
+#line 15 "parser.y"
 {
 	int    type_int;
 	float  type_float;
+        char   type_char;
 	char   type_id[32];
 	struct node *ptr;
 }
 /* Line 1529 of yacc.c.  */
-#line 110 "Parser.tab.h"
+#line 133 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

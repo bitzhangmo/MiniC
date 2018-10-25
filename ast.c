@@ -67,6 +67,12 @@ void display(struct node *T,int indent)  {//对抽象语法树的先根遍历
                         printf("%*c循环体：\n",indent+3,' ');
                         display(T->ptr[1],indent+6);      //显示循环体
                         break;
+    case FOR:           printf("%*c循环语句：\n",indent,' ');
+                        printf("%*c循环条件：\n",indent+3,' ');
+                        display(T->ptr[0],indent+6);
+                        printf("%*c循环体：\n",indent+3,' ');
+                        display(T->ptr[1],indent+6);
+                        break;
 	case IF_THEN:       printf("%*c条件语句(IF_THEN)：\n",indent,' ');
                         printf("%*c条件：\n",indent+3,' ');
                         display(T->ptr[0],indent+6);      //显示条件
@@ -102,11 +108,17 @@ void display(struct node *T,int indent)  {//对抽象语法树的先根遍历
                             T0=T0->ptr[1];
                             }
                         break;
+    case ARRAY:         printf("%*cID： %s\n",indent,' ',T->type_id);
+                        printf("%*c数组长度: \n",indent,' ');
+                        display(T->ptr[0],indent+3);
+                        break;
 	case ID:	        printf("%*cID： %s\n",indent,' ',T->type_id);
                         break;
 	case INT:	        printf("%*cINT：%d\n",indent,' ',T->type_int);
                         break;
-	case FLOAT:	        printf("%*cFLAOT：%f\n",indent,' ',T->type_float);
+	case FLOAT:	        printf("%*cFLOAT：%f\n",indent,' ',T->type_float);
+                        break;
+    case CHAR:          printf("%*cCHAR: %c\n",indent,' ',T->type_char);
                         break;
 	case ASSIGNOP:
 	case AND:
@@ -115,6 +127,12 @@ void display(struct node *T,int indent)  {//对抽象语法树的先根遍历
 	case PLUS:
 	case MINUS:
 	case STAR:
+    case SELFPLUS:
+    case SELFMINUS:
+    case PLUSASS:
+    case MINUSASS:
+    case STARASS:
+    case DIVASS:
 	case DIV:
                     printf("%*c%s\n",indent,' ',T->type_id);
                     display(T->ptr[0],indent+3);
