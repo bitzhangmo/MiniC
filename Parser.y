@@ -118,7 +118,7 @@ Args:    Exp COMMA Args    {$$=mknode(ARGS,$1,$3,NULL,yylineno);}
 
 int main(int argc, char *argv[]){
 	yyin=fopen(argv[1],"r");
-	if (!yyin) return;
+	if (!yyin) return 0;
 	yylineno=1;
 	yyparse();
 	return 0;
