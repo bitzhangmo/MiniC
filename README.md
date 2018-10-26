@@ -19,6 +19,6 @@ A homework of compiling C-- language by flex and bison.
 - plus minus star & div
 - compare operator
 
-#### 
+#### Other
 - line Comment
 - block Comment

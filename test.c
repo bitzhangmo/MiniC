@@ -3,7 +3,8 @@ int main()
     int a;
     float b;
     char c;
-    //int a[2];
+    int q[2];
+    float w[34];
     a++;
     b--;
     // test

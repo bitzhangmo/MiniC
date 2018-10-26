@@ -63,7 +63,7 @@ ExtDecList:  VarDec      {$$=$1;}       /*每一个EXT_DECLIST的结点，其第
            | VarDec COMMA ExtDecList {$$=mknode(EXT_DEC_LIST,$1,$3,NULL,yylineno);}
            ;  
 VarDec:  ID          {$$=mknode(ID,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}   //ID结点，标识符符号串存放结点的type_id
-                        //| VarDec LB IntList RB {$$=mknode(ARRAY,$1,$3,NULL,yylineno);strcpy($$->type_id,$1);}
+        | VarDec LB IntList RB {$$=mknode(ARRAY,$1,$3,NULL,yylineno);strcpy($$->type_id,$1);}
          ;
 IntList: INT            {$$=mknode(INT,NULL,NULL,NULL,yylineno);$$->type_int=$1;$$->type=INT;}
         ;
