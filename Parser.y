@@ -30,7 +30,7 @@ void display(struct node *,int);
 %token <type_char> CHAR                 // 制定CHAR的语义值是type_char，有词法分析得到的字符
 
 %token LP RP LC RC SEMI COMMA LB RB   //用bison对该文件编译时，带参数-d，生成的exp.tab.h中给这些单词进行编码，可在lex.l中包含parser.tab.h使用这些单词种类码
-%token PLUS MINUS STAR DIV ASSIGNOP AND OR NOT IF ELSE WHILE RETURN SELFPLUS SELFMINUS PLUSASS MINUSASS STARASS DIVASS NMINUS FOR
+%token PLUS MINUS STAR DIV ASSIGNOP AND OR NOT IF ELSE WHILE RETURN SELFPLUS SELFMINUS PLUSASS MINUSASS STARASS DIVASS NMINUS FOR STRUCT
 
 %left ASSIGNOP
 %left OR
@@ -68,8 +68,8 @@ ExtDecList:  VarDec      {$$=$1;}       /*每一个EXT_DECLIST的结点，其第
            ;
 /*变量与数组声明*/  
 VarDec:  ID          {$$=mknode(ID,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}   //ID结点，标识符符号串存放结点的type_id
-        | VarDec LB IntList RB {$$=mknode(ARRAY,$1,$3,NULL,yylineno);strcpy($$->type_id,$1);}   // 数组
-         ;
+        | VarDec LB IntList RB {$$=mknode(ARRAY,$1,$3,NULL,yylineno);}   // 数组
+        ;
 IntList: INT            {$$=mknode(INT,NULL,NULL,NULL,yylineno);$$->type_int=$1;$$->type=INT;}
         ;
 /*函数声明与参数表列*/
@@ -99,6 +99,7 @@ Stmt:   Exp SEMI    {$$=mknode(EXP_STMT,$1,NULL,NULL,yylineno);}
       | FOR LP DecList SEMI Exp SEMI Exp RP Stmt {$$=mknode(FOR,$5,$9,NULL,yylineno);}
       | FOR LP SEMI Exp SEMI Exp RP Stmt {$$=mknode(FOR,$4,$8,NULL,yylineno);}
       | FOR LP SEMI Exp SEMI RP Stmt {$$=mknode(FOR,$4,$7,NULL,yylineno);}
+      | STRUCT Stmt ID SEMI {$$=mknode(STRUCT,$2,$3,NULL,yylineno);strcpy($$->type_id,$3);}
       ;
   
 DefList: {$$=NULL; }
@@ -141,6 +142,7 @@ Exp:    Exp ASSIGNOP Exp {$$=mknode(ASSIGNOP,$1,$3,NULL,yylineno);strcpy($$->typ
       | FLOAT         {$$=mknode(FLOAT,NULL,NULL,NULL,yylineno);$$->type_float=$1;$$->type=FLOAT;}
       | CHAR          {$$=mknode(CHAR,NULL,NULL,NULL,yylineno);$$->type_char=$1,$$->type=CHAR;}
       ;
+
 /**/
 Args:    Exp COMMA Args    {$$=mknode(ARGS,$1,$3,NULL,yylineno);}
        | Exp               {$$=mknode(ARGS,$1,NULL,NULL,yylineno);}

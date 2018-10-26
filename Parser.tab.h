@@ -73,8 +73,9 @@
      DIVASS = 289,
      NMINUS = 290,
      FOR = 291,
-     UMINUS = 292,
-     LOWER_THEN_ELSE = 293
+     STRUCT = 292,
+     UMINUS = 293,
+     LOWER_THEN_ELSE = 294
    };
 #endif
 /* Tokens.  */
@@ -112,8 +113,9 @@
 #define DIVASS 289
 #define NMINUS 290
 #define FOR 291
-#define UMINUS 292
-#define LOWER_THEN_ELSE 293
+#define STRUCT 292
+#define UMINUS 293
+#define LOWER_THEN_ELSE 294
 
 
 
@@ -129,7 +131,7 @@ typedef union YYSTYPE
 	struct node *ptr;
 }
 /* Line 1529 of yacc.c.  */
-#line 133 "parser.tab.h"
+#line 135 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

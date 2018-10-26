@@ -4,9 +4,13 @@ int main()
     float b;
     char c;
     int q[2];
-    float w[34];
+    float w[34][12];
     a++;
     b--;
+    struct {
+        int a;
+        float b;
+    } op;
     // test
     /* test */
     a += b;

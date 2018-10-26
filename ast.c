@@ -108,8 +108,14 @@ void display(struct node *T,int indent)  {//对抽象语法树的先根遍历
                             T0=T0->ptr[1];
                             }
                         break;
-    case ARRAY:         printf("%*c数组长度: \n",indent,' ');
-                        display(T->ptr[1],indent+3);
+                        
+    case ARRAY:         if(T->ptr[0] == NULL)
+                            printf("%*cID: %s\n",indent,' ',T->ptr[0]->type_id);
+                        if(T->ptr[1] != NULL)
+                        {
+                            printf("%*c数组长度：%d\n",indent+3,' ',T->ptr[1]->type_int);
+                        }
+                        display(T->ptr[0],indent+3);
                         break;
 	case ID:	        printf("%*cID： %s\n",indent,' ',T->type_id);
                         break;
@@ -118,6 +124,10 @@ void display(struct node *T,int indent)  {//对抽象语法树的先根遍历
 	case FLOAT:	        printf("%*cFLOAT：%f\n",indent,' ',T->type_float);
                         break;
     case CHAR:          printf("%*cCHAR: %c\n",indent,' ',T->type_char);
+                        break;
+    case STRUCT:        printf("%*c结构体： \n",indent,' ');
+                        printf("%*cID: %s\n",indent+3,' ',T->type_id);
+                        display(T->ptr[0],indent+3);
                         break;
 	case ASSIGNOP:
 	case AND:
