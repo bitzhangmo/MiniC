@@ -47,30 +47,37 @@ void display(struct node *,int);
 %nonassoc ELSE
 
 %%
-
-program: ExtDefList    { display($1,0);}     /*显示语法树,语义分析*/
+/*显示语法树,语义分析*/
+program: ExtDefList    { display($1,0);}     
          ; 
+/*外部定义列表*/
 ExtDefList: {$$=NULL;}
           | ExtDef ExtDefList {$$=mknode(EXT_DEF_LIST,$1,$2,NULL,yylineno);}   //每一个EXTDEFLIST的结点，其第1棵子树对应一个外部变量声明或函数
           ;  
+/*外部变量与函数声明*/
 ExtDef:   Specifier ExtDecList SEMI   {$$=mknode(EXT_VAR_DEF,$1,$2,NULL,yylineno);}   //该结点对应一个外部变量声明
          |Specifier FuncDec CompSt    {$$=mknode(FUNC_DEF,$1,$2,$3,yylineno);}         //该结点对应一个函数定义
          | error SEMI   {$$=NULL; }
          ;
+/*类型标识符*/
 Specifier:  TYPE    {$$=mknode(TYPE,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);$$->type=!strcmp($1,"int")?INT:FLOAT;}   
-           ;      
+           ;   
+/**/   
 ExtDecList:  VarDec      {$$=$1;}       /*每一个EXT_DECLIST的结点，其第一棵子树对应一个变量名(ID类型的结点),第二棵子树对应剩下的外部变量名*/
            | VarDec COMMA ExtDecList {$$=mknode(EXT_DEC_LIST,$1,$3,NULL,yylineno);}
-           ;  
+           ;
+/*变量与数组声明*/  
 VarDec:  ID          {$$=mknode(ID,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}   //ID结点，标识符符号串存放结点的type_id
         | VarDec LB IntList RB {$$=mknode(ARRAY,$1,$3,NULL,yylineno);strcpy($$->type_id,$1);}   // 数组
          ;
 IntList: INT            {$$=mknode(INT,NULL,NULL,NULL,yylineno);$$->type_int=$1;$$->type=INT;}
         ;
+/*函数声明与参数表列*/
 FuncDec: ID LP VarList RP   {$$=mknode(FUNC_DEC,$3,NULL,NULL,yylineno);strcpy($$->type_id,$1);}//函数名存放在$$->type_id
-		|ID LP  RP   {$$=mknode(FUNC_DEC,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}//函数名存放在$$->type_id
+	|ID LP RP   {$$=mknode(FUNC_DEC,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}//函数名存放在$$->type_id
 
         ;  
+
 VarList: ParamDec  {$$=mknode(PARAM_LIST,$1,NULL,NULL,yylineno);}
         | ParamDec COMMA  VarList  {$$=mknode(PARAM_LIST,$1,$3,NULL,yylineno);}
         ;
@@ -106,32 +113,35 @@ DecList: Dec  {$$=mknode(DEC_LIST,$1,NULL,NULL,yylineno);}
 Dec:    VarDec ASSIGNOP Exp {$$=mknode(ASSIGNOP,$1,$3,NULL,yylineno);strcpy($$->type_id,"ASSIGNOP");}           // 已有变量赋值
        | Specifier VarDec ASSIGNOP Exp {$$=mknode(ASSIGNOP,$1,$2,$4,yylineno);strcpy($$->type_id,"ASSIGNOP")}   // 声明变量并赋值
        ;
-Exp:    Exp ASSIGNOP Exp {$$=mknode(ASSIGNOP,$1,$3,NULL,yylineno);strcpy($$->type_id,"ASSIGNOP");}//$$结点type_id空置未用，正好存放运算符
-      | Exp AND Exp   {$$=mknode(AND,$1,$3,NULL,yylineno);strcpy($$->type_id,"AND");}
-      | Exp OR Exp    {$$=mknode(OR,$1,$3,NULL,yylineno);strcpy($$->type_id,"OR");}
-      | Exp RELOP Exp {$$=mknode(RELOP,$1,$3,NULL,yylineno);strcpy($$->type_id,$2);}  //词法分析关系运算符号自身值保存在$2中
-      | Exp PLUS Exp  {$$=mknode(PLUS,$1,$3,NULL,yylineno);strcpy($$->type_id,"PLUS");}
-      | Exp SELFPLUS  {$$=mknode(SELFPLUS,$1,NULL,NULL,yylineno);strcpy($$->type_id,"SELFPLUS");}        // 自增
+
+/*一切算术运算*/
+Exp:    Exp ASSIGNOP Exp {$$=mknode(ASSIGNOP,$1,$3,NULL,yylineno);strcpy($$->type_id,"ASSIGNOP");}      // $$结点type_id空置未用，正好存放运算符
+      | Exp AND Exp   {$$=mknode(AND,$1,$3,NULL,yylineno);strcpy($$->type_id,"AND");}                   // 与
+      | Exp OR Exp    {$$=mknode(OR,$1,$3,NULL,yylineno);strcpy($$->type_id,"OR");}                     // 或
+      | Exp RELOP Exp {$$=mknode(RELOP,$1,$3,NULL,yylineno);strcpy($$->type_id,$2);}                    // 词法分析关系运算符号自身值保存在$2中
+      | Exp PLUS Exp  {$$=mknode(PLUS,$1,$3,NULL,yylineno);strcpy($$->type_id,"PLUS");}                 // 加
+      | Exp SELFPLUS  {$$=mknode(SELFPLUS,$1,NULL,NULL,yylineno);strcpy($$->type_id,"SELFPLUS");}       // 自增
       | SELFPLUS Exp  {$$=mknode(SELFPLUS,$2,NULL,NULL,yylineno);strcpy($$->type_id,"SELFPLUS");}       // 自增
-      | Exp PLUSASS Exp   {$$=mknode(PLUSASS,$1,$3,NULL,yylineno);strcpy($$->type_id,"PLUSASS");}         // 复合加
-      | Exp MINUS Exp {$$=mknode(MINUS,$1,$3,NULL,yylineno);strcpy($$->type_id,"MINUS");}
+      | Exp PLUSASS Exp   {$$=mknode(PLUSASS,$1,$3,NULL,yylineno);strcpy($$->type_id,"PLUSASS");}       // 复合加
+      | Exp MINUS Exp {$$=mknode(MINUS,$1,$3,NULL,yylineno);strcpy($$->type_id,"MINUS");}               // 减
       | Exp SELFMINUS {$$=mknode(SELFMINUS,$1,NULL,NULL,yylineno);strcpy($$->type_id,"SELFMINUS");}     // 自减
       | Exp MINUSASS Exp  {$$=mknode(MINUSASS,$1,$3,NULL,yylineno);strcpy($$->type_id,"MINUSASS");}     // 复合减
       | SELFMINUS Exp {$$=mknode(SELFMINUS,$2,NULL,NULL,yylineno);strcpy($$->type_id,"SELFMINUS");}     // 自减
-      | Exp STAR Exp  {$$=mknode(STAR,$1,$3,NULL,yylineno);strcpy($$->type_id,"STAR");}
-      | Exp DIV Exp   {$$=mknode(DIV,$1,$3,NULL,yylineno);strcpy($$->type_id,"DIV");}
-      | Exp STARASS Exp {$$=mknode(STARASS,$1,$3,NULL,yylineno);strcpy($$->type_id,"STARASS");}
-      | Exp DIVASS Exp  {$$=mknode(DIVASS,$1,$3,NULL,yylineno);strcpy($$->type_id,"DIVASS");}
-      | LP Exp RP     {$$=$2;}
-      | MINUS Exp %prec UMINUS   {$$=mknode(UMINUS,$2,NULL,NULL,yylineno);strcpy($$->type_id,"UMINUS");}
-      | NOT Exp       {$$=mknode(NOT,$2,NULL,NULL,yylineno);strcpy($$->type_id,"NOT");}
-      | ID LP Args RP {$$=mknode(FUNC_CALL,$3,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
-      | ID LP RP      {$$=mknode(FUNC_CALL,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
-      | ID            {$$=mknode(ID,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}
+      | Exp STAR Exp  {$$=mknode(STAR,$1,$3,NULL,yylineno);strcpy($$->type_id,"STAR");}                 // 乘
+      | Exp DIV Exp   {$$=mknode(DIV,$1,$3,NULL,yylineno);strcpy($$->type_id,"DIV");}                   // 除
+      | Exp STARASS Exp {$$=mknode(STARASS,$1,$3,NULL,yylineno);strcpy($$->type_id,"STARASS");}         // 复合乘
+      | Exp DIVASS Exp  {$$=mknode(DIVASS,$1,$3,NULL,yylineno);strcpy($$->type_id,"DIVASS");}           // 复合除
+      | LP Exp RP     {$$=$2;}                                                                          // 括号
+      | MINUS Exp %prec UMINUS   {$$=mknode(UMINUS,$2,NULL,NULL,yylineno);strcpy($$->type_id,"UMINUS");}// 减优先级高于负
+      | NOT Exp       {$$=mknode(NOT,$2,NULL,NULL,yylineno);strcpy($$->type_id,"NOT");}                 // 非
+      | ID LP Args RP {$$=mknode(FUNC_CALL,$3,NULL,NULL,yylineno);strcpy($$->type_id,$1);}              // 有参数函数
+      | ID LP RP      {$$=mknode(FUNC_CALL,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}            // 无参数函数
+      | ID            {$$=mknode(ID,NULL,NULL,NULL,yylineno);strcpy($$->type_id,$1);}                   // 数据类型
       | INT           {$$=mknode(INT,NULL,NULL,NULL,yylineno);$$->type_int=$1;$$->type=INT;}
       | FLOAT         {$$=mknode(FLOAT,NULL,NULL,NULL,yylineno);$$->type_float=$1;$$->type=FLOAT;}
       | CHAR          {$$=mknode(CHAR,NULL,NULL,NULL,yylineno);$$->type_char=$1,$$->type=CHAR;}
       ;
+/**/
 Args:    Exp COMMA Args    {$$=mknode(ARGS,$1,$3,NULL,yylineno);}
        | Exp               {$$=mknode(ARGS,$1,NULL,NULL,yylineno);}
        ;
